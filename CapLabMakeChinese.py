@@ -168,6 +168,8 @@ class CapLabMakeChinese(wx.Frame):
         tVar: str = self.InputChineseTextEntry.GetValue().strip()
         if tVar in self.cache_Translation.keys():
             self.cache_Translation.pop(tVar)
+            self.InputChineseTextEntry.Clear()
+            self.InputCodeTextEntry.Clear()
             self.updateChoiceList()
         event.Skip()
 
