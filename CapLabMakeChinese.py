@@ -99,16 +99,18 @@ class CapLabMakeChinese(wx.Frame):
         self.DeleteThisUnitButton.Bind(wx.EVT_BUTTON, self.DeleteThisUnitButtonOnButtonClick)
 
         # Init
-        if isfile('CLMC.json'):
+        if isfile('CapMain.exe') and isdir('./Translate'):
+            self.saveFolderPath = getcwd() + sep + 'Translate' + sep
+        elif isfile('CLMC.json'):
             try:
                 tF = open('CLMC.json', 'r', encoding='UTF-8')
                 tD: dict = json.load(tF)
                 tF.close()
-                self.saveFolderPath = tD.get('folder')
+                self.saveFolderPath = tD.get('folder', '')
+                if not isdir(self.saveFolderPath):
+                    self.selectCapMainEXEPath()
             finally:
                 pass
-        elif isfile('CapMain.exe') and isdir('./Translate'):
-            self.saveFolderPath = getcwd() + sep + 'Translate' + sep
         else:
             self.selectCapMainEXEPath()
         if isdir(self.saveFolderPath):
@@ -226,6 +228,7 @@ class CapLabMakeChinese(wx.Frame):
 
     def enableAllButton(self):
         self.SelectMainExecutePathButton.Disable()
+        self.SelectMainExecutePathButton.SetLabel('无需选择')
         self.AddNewUnitButton.Enable()
         self.DeleteThisUnitButton.Enable()
         self.SaveTranslationButton.Enable()
