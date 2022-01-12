@@ -99,8 +99,11 @@ class CapLabMakeChinese(wx.Frame):
         self.DeleteThisUnitButton.Bind(wx.EVT_BUTTON, self.DeleteThisUnitButtonOnButtonClick)
 
         # Init
-        if isfile('CapMain.exe') and isdir('./Translate'):
-            self.saveFolderPath = getcwd() + sep + 'Translate' + sep
+        if isfile('CapMain.exe'):
+            if isdir('./Translate'):  # < V8.0.00
+                self.saveFolderPath = getcwd() + sep + 'Translate' + sep
+            elif isdir('./languages/Chinese/translate'):  # >= V8.0.00
+                self.saveFolderPath = sep.join([getcwd(), 'languages', 'Chinese', 'translate']) + sep
         elif isfile('CLMC.json'):
             try:
                 tF = open('CLMC.json', 'r', encoding='UTF-8')
@@ -185,9 +188,16 @@ class CapLabMakeChinese(wx.Frame):
         fileDialog.Destroy()
         if isfile(capMain_path):
             capMain_folder_path = sep.join(capMain_path.split(sep)[:-1]) + sep + 'Translate' + sep
+            backup_saveFolderPath = sep.join([sep.join(capMain_path.split(sep)[:-1]),
+                                              'languages', 'Chinese', 'translate']) + sep
             if isdir(capMain_folder_path):
                 self.saveFolderPath = capMain_folder_path
                 return True
+            elif isdir(backup_saveFolderPath):
+                self.saveFolderPath = backup_saveFolderPath
+                return True
+            else:
+                wx.MessageDialog(self, '无法找到翻译目录，请联系开发者或群友。', '错误').ShowModal()
         return False
 
     def loadTranslateFile(self):
